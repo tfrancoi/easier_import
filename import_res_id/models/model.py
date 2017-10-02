@@ -43,13 +43,14 @@ class ResIdMixin(models.AbstractModel):
     def _set_external_id(self):
         xml_ids = [_extract_xml_id(rec.res_external_id) for rec in self if rec.res_external_id]
         rec_per_xml_id = defaultdict(list)
+
         for rec in self.filtered('res_external_id'):
             rec_per_xml_id[_extract_xml_id(rec.res_external_id)].append(rec)
-        
         domain = []
+
         for module, group in groupby(xml_ids, lambda x: x[0]):
             domain.extend(['&', ('module', '=', module),('name', 'in', [g[1] for g in group])])
-        domain = ['|'] * (len(domain) / 3 -1) + domain
+        domain = ['|'] * int(len(domain) / 3 -1) + domain
 
         for external_id in self.env['ir.model.data'].search(domain):
             for record in rec_per_xml_id[(external_id.module, external_id.name)]:

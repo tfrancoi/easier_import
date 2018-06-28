@@ -33,7 +33,7 @@ class ResIdMixin(models.AbstractModel):
         domain = []
         for model, group in groupby(self, lambda x: x[self._model_field]):
             domain.extend(['&', ('model', '=', model),('res_id', 'in', [g[self._res_id_field] for g in group])])
-        domain = ['|'] * (len(domain) / 3 -1) + domain
+        domain = ['|'] * int(len(domain) / 3 -1) + domain
 
         for external_id in self.env['ir.model.data'].search(domain):
             for record in rec_per_model_res_id[(external_id.model, external_id.res_id)]:
@@ -72,3 +72,7 @@ class MailMessage(models.Model):
 class MailFollowers(models.Model):
     _name = 'mail.followers'
     _inherit = ['mail.followers', "import.res_id.mixin"]
+
+class MailActivity(models.Model):
+    _name = 'mail.activity'
+    _inherit = ['mail.activity', "import.res_id.mixin"]

@@ -20,7 +20,7 @@ class Base(models.AbstractModel):
             for field in self._metadata_field:
                 if field in vals:
                     set_clause.append("%s=%%s" % field)
-                    values.append(vals[field])
+                    values.append(vals[field] or None)
             if values and set_clause:
                 sql = sql % ', '.join(set_clause)
                 self.env.cr.execute(sql, tuple(values))

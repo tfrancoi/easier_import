@@ -6,11 +6,11 @@ class BaseModel(models.BaseModel):
     
     @api.model
     def load(self, fields, data):
-        if self.env.context.get('defer_fields_computation'):
-            with self.env.norecompute():
-                res = super(BaseModel, self).load(fields, data)
-            recs = self.search([('id', 'in', res['ids'])])
-            recs.recompute()
-        else:
+        if not self.env.context.get('defer_fields_computation'):
+            return super(BaseModel, self).load(fields, data)
+
+        with self.env.norecompute():
             res = super(BaseModel, self).load(fields, data)
+        self.recompute()
+
         return res

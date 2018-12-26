@@ -13,7 +13,7 @@ class Base(models.AbstractModel):
         """
             generate the query and execute it to upgrade metadata value directly in SQL since it's the only way to update them.
         """
-        if self.env.context.get('write_metadata') and self.env.uid == 1:
+        if self.env.context.get('write_metadata') and self.env.uid == 2:
             sql = 'update %s set %%s where id in %s' % (self._table, tuple(self.ids) if len(self.ids) > 1 else '(%s)' % self.id)
             set_clause = []
             values = []
